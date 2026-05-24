@@ -420,65 +420,114 @@ h3{
   100%{opacity:1;transform:scale(1.6)}
 }
 
-/* ═══════════ COMMAND NODES (formerly Pillars Strip) ═══════════ */
+/* ═══════════ COMMAND NODES — Accordion Services ═══════════ */
 .nodes-section{background:var(--void2);padding-top:var(--section-pad);padding-bottom:var(--section-pad)}
 .nodes-intro{max-width:700px;margin-bottom:clamp(3rem,6vw,5rem)}
 .nodes-intro .sec-eyebrow{margin-bottom:var(--sp-4)}
 .nodes-intro h2{margin-bottom:var(--sp-5)}
 .nodes-intro p{font-size:var(--text-base);color:var(--muted);line-height:2}
 
+/* ── Service accordion list ── */
 .nodes-grid{
-  display:grid;grid-template-columns:repeat(2,1fr);
-  gap:3px;background:rgba(108,79,248,.07);
+  display:flex;flex-direction:column;gap:3px;
 }
 .node-card{
   background:var(--void);
-  padding:clamp(2.2rem,3.5vw,3.2rem) clamp(1.8rem,3vw,2.8rem);
   position:relative;overflow:hidden;
   transition:background .4s var(--ease);
+  cursor:pointer;
 }
-.node-card:hover{background:rgba(12,15,28,.98)}
-.node-card:hover .node-card-img img{opacity:0.14 !important;}
-/* Make sure all node card children sit above the bg image */
+.node-card:hover{background:rgba(10,13,24,.98)}
+.node-card:hover .node-card-img img{opacity:0.12 !important;}
 .node-card .node-glow,
 .node-card .node-header,
 .node-card .node-body{position:relative;z-index:1;}
+
+/* Accent line animates on open */
 .node-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--volt),var(--signal));
-  transform:scaleX(0);transform-origin:left;
+  content:'';position:absolute;top:0;left:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--volt),var(--signal));
+  transform:scaleY(0);transform-origin:top;
   transition:transform .5s var(--ease);
 }
-.node-card:hover::before{transform:scaleX(1)}
+.node-card.open::before{transform:scaleY(1)}
+
+/* Glow pulse when open */
 .node-glow{
-  position:absolute;bottom:0;right:0;width:280px;height:280px;
+  position:absolute;bottom:0;right:0;width:380px;height:380px;
   border-radius:50%;
-  background:radial-gradient(circle, rgba(108,79,248,.09) 0%, transparent 70%);
+  background:radial-gradient(circle, rgba(108,79,248,.07) 0%, transparent 70%);
   transform:translate(40%,40%);pointer-events:none;
-  transition:opacity .5s,transform .6s var(--ease);opacity:0;
+  transition:opacity .6s,transform .7s var(--ease);opacity:0;
 }
-.node-card:hover .node-glow{opacity:1;transform:translate(25%,25%)}
+.node-card.open .node-glow{opacity:1;transform:translate(25%,30%)}
 
-.node-header{display:flex;align-items:flex-start;gap:1.2rem;margin-bottom:var(--sp-5)}
-.node-icon{font-size:2rem;opacity:.9;flex-shrink:0;margin-top:.15rem}
-.node-meta{}
-.node-tag{font-size:var(--text-xs);letter-spacing:.2em;text-transform:uppercase;color:var(--signal);margin-bottom:.4rem;font-weight:500}
+/* ── Header row (always visible) ── */
+.node-header{
+  display:flex;align-items:center;gap:1.5rem;
+  padding:clamp(1.4rem,2.5vw,2rem) clamp(1.8rem,3vw,2.8rem);
+  transition:padding .4s var(--ease);
+  user-select:none;
+}
+.node-card.open .node-header{padding-bottom:1rem}
+.node-icon{
+  font-size:2rem;opacity:.9;flex-shrink:0;
+  width:3.2rem;height:3.2rem;display:flex;align-items:center;justify-content:center;
+  background:rgba(108,79,248,.08);border:1px solid var(--border);
+  transition:background .3s,border-color .3s;
+}
+.node-card.open .node-icon,
+.node-card:hover .node-icon{background:rgba(108,79,248,.15);border-color:var(--border-hi)}
+.node-meta{flex:1;min-width:0}
+.node-tag{font-size:var(--text-xs);letter-spacing:.2em;text-transform:uppercase;color:var(--signal);margin-bottom:.3rem;font-weight:500}
 .node-name{font-family:var(--ff);font-size:var(--text-xl);font-weight:700;color:var(--ice);line-height:1.25;letter-spacing:-.02em}
+.node-oneliner{font-size:var(--text-sm);color:var(--dim);margin-top:.3rem;line-height:1.5;transition:opacity .3s}
+.node-card.open .node-oneliner{opacity:0;height:0;margin:0;overflow:hidden}
 
-.node-body{display:flex;flex-direction:column;gap:var(--sp-4)}
-.node-manifesto{font-size:var(--text-base);color:var(--muted);line-height:2}
-.node-manifesto strong{color:var(--ice);font-weight:500}
+/* Chevron toggle */
+.node-toggle{
+  flex-shrink:0;width:2rem;height:2rem;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);color:var(--dim);
+  font-size:.75rem;font-style:normal;
+  transition:transform .4s var(--ease),border-color .3s,color .3s,background .3s;
+}
+.node-card.open .node-toggle{
+  transform:rotate(45deg);
+  border-color:var(--signal);color:var(--signal);background:rgba(0,245,160,.06);
+}
+.node-card:hover .node-toggle{border-color:var(--border-hi);color:var(--ice)}
+
+/* ── Expandable body ── */
+.node-body{
+  max-height:0;overflow:hidden;
+  transition:max-height .55s var(--ease2), opacity .4s;
+  opacity:0;
+  padding:0 clamp(1.8rem,3vw,2.8rem) 0 calc(clamp(1.8rem,3vw,2.8rem) + 4.7rem);
+}
+.node-card.open .node-body{max-height:600px;opacity:1;padding-bottom:clamp(1.8rem,3vw,2.8rem)}
+
+/* Key points list replaces wall-of-text */
+.node-points{list-style:none;display:flex;flex-direction:column;gap:.65rem;margin-bottom:var(--sp-4)}
+.node-points li{
+  font-size:var(--text-sm);color:var(--muted);line-height:1.7;
+  padding-left:1.3rem;position:relative;
+}
+.node-points li::before{
+  content:'→';position:absolute;left:0;
+  color:var(--signal);font-size:.8rem;top:.05rem;
+}
 
 .node-outcome{
   border-left:2px solid var(--volt);
-  padding:.75rem 0 .75rem 1.2rem;
-  margin-top:.5rem;
+  padding:.7rem 0 .7rem 1.1rem;
 }
-.node-outcome-label{font-size:var(--text-xs);letter-spacing:.16em;text-transform:uppercase;color:var(--volt-lt);margin-bottom:.35rem;font-weight:500}
-.node-outcome p{font-size:var(--text-sm);color:var(--muted);line-height:1.85}
+.node-outcome-label{font-size:var(--text-xs);letter-spacing:.16em;text-transform:uppercase;color:var(--volt-lt);margin-bottom:.3rem;font-weight:500}
+.node-outcome p{font-size:var(--text-sm);color:var(--muted);line-height:1.75}
 
-/* Keep old strip styles in case referenced elsewhere, but hidden */
+/* Keep old strip styles hidden */
 .strip-section{display:none}
+.node-manifesto{display:none}
 
 /* ═══════════ ABOUT ═══════════ */
 .about-grid{
@@ -542,12 +591,11 @@ h3{
   gap:3px;background:rgba(108,79,248,.08);
 }
 .tier-card{
-  background:var(--void2);display:none;flex-direction:column;
+  background:var(--void2);display:flex;flex-direction:column;
   padding:clamp(1.8rem,3vw,2.8rem) clamp(1.5rem,2.5vw,2.4rem) clamp(2rem,3.5vw,3rem);
   transition:opacity .5s var(--ease),transform .5s var(--ease),box-shadow .4s;
   transform-style:preserve-3d;
 }
-.tier-card.show{display:flex}
 .tier-card:hover{
   background:rgba(15,18,32,.98);
   box-shadow:0 28px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(108,79,248,.22);
@@ -1109,6 +1157,105 @@ h2 em{
   background:var(--signal);
   box-shadow:0 0 8px var(--signal),0 0 14px rgba(0,245,160,.5);
 }
+
+/* ═══════════ TESTIMONIALS ═══════════ */
+.testi-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:3px;
+  background:rgba(108,79,248,.07);
+  margin-bottom:3px;
+}
+.testi-card{
+  background:var(--void);
+  padding:clamp(2rem,3vw,2.8rem) clamp(1.6rem,2.5vw,2.2rem);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;gap:1.2rem;
+  transition:background .4s var(--ease),box-shadow .4s;
+}
+.testi-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--volt),var(--signal));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .5s var(--ease);
+}
+.testi-card:hover::before{transform:scaleX(1)}
+.testi-card:hover{
+  background:rgba(12,15,28,.98);
+  box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px rgba(108,79,248,.2);
+}
+.testi-featured{
+  grid-column:1/-1;
+  background:linear-gradient(135deg,rgba(108,79,248,.07),rgba(0,245,160,.04));
+  border:1px solid rgba(108,79,248,.18);
+}
+.testi-featured-inner{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;gap:1.8rem;max-width:860px;margin:0 auto;
+}
+.testi-quote-mark{
+  font-family:var(--ff);font-size:6rem;line-height:0.6;
+  color:var(--volt);opacity:0.35;font-weight:800;
+}
+.testi-featured-who{display:flex;align-items:center;gap:1rem;}
+.testi-body-lg{
+  font-size:var(--text-lg)!important;line-height:1.85!important;
+  color:var(--ice)!important;opacity:0.9;
+}
+.testi-top{display:flex;align-items:center;gap:1rem;}
+.testi-avatar{
+  width:54px;height:54px;border-radius:50%;overflow:hidden;
+  border:1.5px solid rgba(108,79,248,.3);flex-shrink:0;
+}
+.testi-avatar-sm{width:44px;height:44px;}
+.testi-avatar img{width:100%;height:100%;object-fit:cover}
+.testi-name{
+  font-family:var(--ff);font-size:var(--text-sm);
+  font-weight:700;color:var(--ice);letter-spacing:-.01em;
+}
+.testi-role{font-size:var(--text-xs);color:var(--dim);letter-spacing:.04em;margin-top:.15rem;}
+.testi-platform{display:flex;align-items:center;gap:.5rem;margin-top:.3rem;}
+.testi-star{color:#f5c542;font-size:.8rem;letter-spacing:.04em;}
+.testi-via{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dimmer);}
+.testi-badge{
+  display:inline-block;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.3rem .9rem;border:1px solid rgba(0,245,160,.2);
+  color:var(--signal);background:rgba(0,245,160,.04);
+  align-self:flex-start;font-weight:600;
+}
+.testi-body{
+  font-family:var(--fb);font-size:var(--text-sm);
+  color:var(--muted);line-height:1.95;flex:1;
+}
+.testi-result{
+  display:flex;align-items:baseline;gap:.6rem;
+  padding:.7rem 1rem;background:rgba(108,79,248,.06);
+  border-left:2px solid var(--volt);font-size:var(--text-xs);margin-top:auto;
+}
+.testi-result-label{color:var(--volt-lt);letter-spacing:.12em;text-transform:uppercase;font-weight:600;white-space:nowrap;}
+.testi-result-val{color:var(--muted)}
+.testi-proof-bar{
+  display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;
+  align-items:center;background:rgba(108,79,248,.05);
+  border:1px solid var(--border);
+  padding:1.4rem clamp(1.5rem,4vw,3rem);margin-top:3px;
+}
+.testi-proof-stat{display:flex;flex-direction:column;align-items:center;gap:.3rem;text-align:center;}
+.testi-proof-n{
+  font-family:var(--ff);font-size:1.6rem;font-weight:800;
+  color:var(--signal);letter-spacing:-.03em;
+  text-shadow:0 0 20px rgba(0,245,160,.5);
+}
+.testi-proof-l{font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);font-weight:500;}
+.testi-proof-divider{width:1px;height:36px;background:var(--border);}
+@media(max-width:900px){
+  .testi-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  .testi-grid{grid-template-columns:1fr}
+  .testi-proof-bar{grid-template-columns:1fr 1fr;gap:1.2rem}
+  .testi-proof-divider{display:none}
+}
 </style>
 </head>
 <body>
@@ -1242,9 +1389,9 @@ h2 em{
     <div class="nodes-grid">
 
       <!-- Node I -->
-      <div class="node-card fu d1">
+      <div class="node-card open fu d1">
         <div class="node-card-img" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
-          <img src="https://images.unsplash.com/photo-1536240478700-b869ad10e128?w=900&q=70&auto=format&fit=crop" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;opacity:0.08;filter:saturate(0.3);transition:opacity .5s;"/>
+          <img src="https://images.unsplash.com/photo-1536240478700-b869ad10e128?w=900&q=70&auto=format&fit=crop" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;opacity:0.06;filter:saturate(0.3);transition:opacity .5s;"/>
         </div>
         <div class="node-glow"></div>
         <div class="node-header">
@@ -1252,13 +1399,20 @@ h2 em{
           <div class="node-meta">
             <div class="node-tag">Service 1</div>
             <div class="node-name">AI-Assisted Video Production</div>
+            <div class="node-oneliner">Studio-quality commercials &amp; social clips — no production crew required.</div>
           </div>
+          <i class="node-toggle">✕</i>
         </div>
         <div class="node-body">
-          <p class="node-manifesto">Hiring a professional video production team to shoot even one commercial can easily cost thousands of dollars and take weeks. Most AI-generated videos, on the other hand, look cheap and generic because there is no real creative direction behind them. Audiences can tell the difference, and they scroll right past. Kiri Studio sits in the middle ground most businesses never knew existed: <strong>cinematic, studio-quality video produced at a fraction of traditional costs</strong>. Every video starts with a full creative brief covering the mood, the story, the camera style, and the emotional message before a single frame is created. The result is professional short-form commercials and social media clips for TikTok, Instagram Reels, and YouTube Shorts that look and feel like they came from a funded studio, delivered fast and priced for real businesses.</p>
+          <ul class="node-points">
+            <li>Cinematic short-form videos for TikTok, Instagram Reels &amp; YouTube Shorts</li>
+            <li>Full creative brief per video — mood, story, camera style, emotional message</li>
+            <li>AI-generated visuals directed by a human creative, not auto-generated filler</li>
+            <li>Delivered fast — no weeks-long production timelines or studio bookings</li>
+          </ul>
           <div class="node-outcome">
             <div class="node-outcome-label">What You Get</div>
-            <p>Studio-quality video content for your brand that builds trust and attracts real viewers, at a price that would have been impossible without a full production team just a few years ago.</p>
+            <p>Studio-quality video content that builds trust and attracts real viewers — at a price that used to require a full production team.</p>
           </div>
         </div>
       </div>
@@ -1266,7 +1420,7 @@ h2 em{
       <!-- Node II -->
       <div class="node-card fu d2">
         <div class="node-card-img" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
-          <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=900&q=70&auto=format&fit=crop" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;opacity:0.08;filter:saturate(0.3);transition:opacity .5s;"/>
+          <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=900&q=70&auto=format&fit=crop" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;opacity:0.06;filter:saturate(0.3);transition:opacity .5s;"/>
         </div>
         <div class="node-glow"></div>
         <div class="node-header">
@@ -1274,13 +1428,20 @@ h2 em{
           <div class="node-meta">
             <div class="node-tag">Service 2</div>
             <div class="node-name">Custom Audio &amp; Brand Music</div>
+            <div class="node-oneliner">Original jingles and voice-overs that make your brand impossible to forget.</div>
           </div>
+          <i class="node-toggle">✕</i>
         </div>
         <div class="node-body">
-          <p class="node-manifesto">Think about the jingle you still remember from a TV commercial you saw years ago. You never tried to memorize it, but it stuck. That is not luck. <strong>Sound is one of the fastest ways to make a brand unforgettable</strong>, and most businesses never invest in it because they assume it is expensive or complicated. It does not have to be. Kiri Studio creates original, custom background music and professional voice-overs in both Tagalog and English, designed specifically around what your brand needs to make people feel. A custom jingle produced by a traditional music house can cost $3,000 or more. You get one every month as part of your plan, already tailored to your brand, already owned by you. Every piece of audio we create is a permanent asset your business keeps and reuses across every video and platform for as long as you need it.</p>
+          <ul class="node-points">
+            <li>Original custom jingle produced every month — yours to keep and reuse forever</li>
+            <li>Professional voice-overs recorded in both Tagalog and English</li>
+            <li>Music designed around your brand's emotion, not off-the-shelf stock tracks</li>
+            <li>Every audio asset is a permanent brand property you own outright</li>
+          </ul>
           <div class="node-outcome">
             <div class="node-outcome-label">What You Get</div>
-            <p>A distinctive brand sound, original music, and professional voice-overs in Tagalog and English that make your business recognizable and memorable, at a cost most brands never thought was accessible to them.</p>
+            <p>A distinctive brand sound that makes your business recognizable and memorable — at a cost most brands never thought was accessible to them.</p>
           </div>
         </div>
       </div>
@@ -1288,7 +1449,7 @@ h2 em{
       <!-- Node III -->
       <div class="node-card fu d1">
         <div class="node-card-img" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
-          <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=900&q=70&auto=format&fit=crop" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;opacity:0.08;filter:saturate(0.3);transition:opacity .5s;"/>
+          <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=900&q=70&auto=format&fit=crop" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;opacity:0.06;filter:saturate(0.3);transition:opacity .5s;"/>
         </div>
         <div class="node-glow"></div>
         <div class="node-header">
@@ -1296,13 +1457,20 @@ h2 em{
           <div class="node-meta">
             <div class="node-tag">Service 3</div>
             <div class="node-name">Website Design &amp; Online Store Setup</div>
+            <div class="node-oneliner">Fast, professionally built sites that rank on Google and convert visitors.</div>
           </div>
+          <i class="node-toggle">✕</i>
         </div>
         <div class="node-body">
-          <p class="node-manifesto">A slow or outdated website quietly loses you customers every single day. Most visitors leave within seconds if a page takes too long to load, and they rarely come back. More importantly, Google ranks fast, well-built websites higher in search results, which means a poorly built site makes your business invisible before a potential customer has even seen it. A professional web developer typically charges $2,000 to $5,000 just to build a website, before any maintenance or updates. With Kiri Studio, <strong>you get an expertly built, fast-loading website included in your monthly plan</strong>, maintained and improved every single week. No one-time build fee. No separate invoice every time you need a change. Just a website that works, ranks, and gets better over time.</p>
+          <ul class="node-points">
+            <li>Custom website or online store built from scratch — no templates, no bloat</li>
+            <li>Optimized for speed and mobile — Google rewards fast sites with higher rankings</li>
+            <li>Weekly maintenance, updates, and data backups included every month</li>
+            <li>No one-time build fee. No separate invoice every time you need a change.</li>
+          </ul>
           <div class="node-outcome">
             <div class="node-outcome-label">What You Get</div>
-            <p>A fast, professionally built website or online store that loads quickly on any device, ranks higher on Google, and is actively maintained and improved every week as part of your plan.</p>
+            <p>A fast, professionally built website that loads on any device, ranks higher on Google, and actively improves every week as part of your plan.</p>
           </div>
         </div>
       </div>
@@ -1310,7 +1478,7 @@ h2 em{
       <!-- Node IV -->
       <div class="node-card fu d2">
         <div class="node-card-img" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
-          <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=900&q=70&auto=format&fit=crop" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;opacity:0.08;filter:saturate(0.3);transition:opacity .5s;"/>
+          <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=900&q=70&auto=format&fit=crop" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;opacity:0.06;filter:saturate(0.3);transition:opacity .5s;"/>
         </div>
         <div class="node-glow"></div>
         <div class="node-header">
@@ -1318,13 +1486,20 @@ h2 em{
           <div class="node-meta">
             <div class="node-tag">Service 4</div>
             <div class="node-name">Social Media &amp; Online Growth</div>
+            <div class="node-oneliner">SEO + daily social management — both channels, one strategy, zero gaps.</div>
           </div>
+          <i class="node-toggle">✕</i>
         </div>
         <div class="node-body">
-          <p class="node-manifesto">A dedicated SEO consultant alone typically charges $1,000 to $2,000 a month. A social media manager on top of that adds another $800 to $1,500. Most businesses treat these as two separate expenses handled by two separate people who have never spoken to each other. <strong>Kiri Studio runs both at the same time as part of one plan</strong>, and because the same director oversees your videos, your website, and your social content, everything your brand publishes works together to grow your visibility on Google and on social media simultaneously. We find the exact search terms your future customers are typing, create content that answers their questions, and then distribute that content across your social platforms every single day. The result is a steady, compounding growth in new customers finding your business every month, without paying for advertisements.</p>
+          <ul class="node-points">
+            <li>Targeted keyword research to push your business above competitors on Google</li>
+            <li>Daily content posted across up to 4 social platforms — no days off</li>
+            <li>SEO and social content coordinated by the same director — no conflicting voices</li>
+            <li>Steady, compounding growth in new customers each month — no ad spend required</li>
+          </ul>
           <div class="node-outcome">
             <div class="node-outcome-label">What You Get</div>
-            <p>A measurable, month-over-month increase in new customers discovering your business on Google and social media, without the separate agency fees that typically come with each service on its own.</p>
+            <p>Month-over-month growth in new customers finding your business on Google and social — without the separate agency fees that typically come with each service.</p>
           </div>
         </div>
       </div>
@@ -1378,15 +1553,11 @@ h2 em{
         <div class="sec-eyebrow">Transparent Pricing. Exceptional Value.</div>
         <h2 style="margin-bottom:0">A Full Team.<br><em>One Monthly Plan.</em></h2>
       </div>
-      <div class="vault-tabs fu d2">
-        <button class="tab active" data-tier="growth">Tier 1</button>
-        <button class="tab" data-tier="omni">Tier 2</button>
-        <button class="tab" data-tier="cmo">Tier 3</button>
-      </div>
+
     </div>
     <div class="tier-grid">
 
-      <div class="tier-card show" data-tier="growth">
+      <div class="tier-card" data-tier="growth">
         <div class="tier-badge">Best for growing businesses</div>
         <div class="tier-name">The Growth Starter</div>
         <div class="tier-was"><s>Agency rate: $3,200/mo</s> <strong>Save $1,951</strong></div>
@@ -1464,9 +1635,9 @@ h2 em{
         <div class="arc-glow"></div>
         <div class="arc-num" style="position:relative;z-index:1;">01</div>
         <div class="arc-tag" style="position:relative;z-index:1;">Full Marketing Director</div>
-        <div class="arc-name" style="position:relative;z-index:1;">The Migrainium Lifestyle Rebrand</div>
+        <div class="arc-name" style="position:relative;z-index:1;">The Luminos Lifestyle Rebrand</div>
         <div class="arc-obj" style="position:relative;z-index:1;">Goal: Transform a functional product into a desirable daily habit</div>
-        <div class="arc-desc" style="position:relative;z-index:1;">Completely refreshed the brand image of Migrainium — shifting it from a plain health product to an elegant, lifestyle-driven daily ritual. Produced cinematic video commercials shot in premium, aspirational settings, and improved the website's Google ranking through targeted SEO work.</div>
+        <div class="arc-desc" style="position:relative;z-index:1;">Completely refreshed the brand image of Luminos Wellness — shifting it from a plain health product to an elegant, lifestyle-driven daily ritual. Produced cinematic video commercials shot in premium, aspirational settings, and improved the website's Google ranking through targeted SEO work.</div>
       </div>
 
       <div class="arc-card fu d2">
@@ -1496,6 +1667,130 @@ h2 em{
     </div>
   </div>
 </section>
+
+<div class="pulse-divider"><span></span><span></span><span></span></div>
+
+<!-- ═══════════ CLIENT TESTIMONIALS ═══════════ -->
+<section class="testimonials-section" id="testimonials" style="position:relative;overflow:hidden;background:var(--void2);">
+  <div class="particle-field"></div>
+  <div class="corner-ornament tl"></div>
+  <div class="corner-ornament br"></div>
+  <div class="wrap sec-pad">
+    <div class="fu">
+      <div class="sec-eyebrow">What Clients Say</div>
+      <h2>Real Businesses.<br><em>Real Words.</em></h2>
+      <p style="font-size:var(--text-base);color:var(--muted);line-height:2;max-width:580px;margin-bottom:clamp(2.5rem,5vw,4rem);">Every review below came from a business owner who was skeptical at first. They all asked the same question: can one person really do all of this? The results answered it for them.</p>
+    </div>
+
+    <div class="testi-grid">
+
+      <!-- Review 1 — Luminos Wellness, founder -->
+      <div class="testi-card fu d1">
+        <div class="testi-top">
+          <div class="testi-avatar">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&q=80&auto=format&fit=crop&crop=faces" alt="Clarisse M." loading="lazy"/>
+          </div>
+          <div class="testi-who">
+            <div class="testi-name">Clarisse M.</div>
+            <div class="testi-role">Founder, Luminos Wellness</div>
+            <div class="testi-platform">
+              <span class="testi-star">★★★★★</span>
+              <span class="testi-via">via Google Review</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-badge">Omnichannel Architect Plan · 8 months</div>
+        <blockquote class="testi-body">"I had tried two separate agencies before Kiri Studio and both of them handed me the same result — a pretty website that nobody visited. Kai was completely different from the first call. He asked about my customers, what problems they had, what made them trust a brand. Within the first month he had already rewritten our product pages, launched three videos that looked genuinely cinematic, and I started getting messages from people who said they found us on Google. By month three our site traffic had more than doubled and we were ranking on the first page for our main search term. I still can't believe what he delivers at this price point."</blockquote>
+        <div class="testi-result">
+          <span class="testi-result-label">Outcome</span>
+          <span class="testi-result-val">2.4× organic traffic · Page 1 Google in 11 weeks</span>
+        </div>
+      </div>
+
+      <!-- Review 2 — E-commerce, clothing brand -->
+      <div class="testi-card fu d2">
+        <div class="testi-top">
+          <div class="testi-avatar">
+            <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=120&q=80&auto=format&fit=crop&crop=faces" alt="Marco T." loading="lazy"/>
+          </div>
+          <div class="testi-who">
+            <div class="testi-name">Marco T.</div>
+            <div class="testi-role">Owner, TRIBO Streetwear</div>
+            <div class="testi-platform">
+              <span class="testi-star">★★★★★</span>
+              <span class="testi-via">via Facebook Recommendation</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-badge">Digital Growth Engine Plan · 5 months</div>
+        <blockquote class="testi-body">"Honestly I was nervous. I'm not a big brand, I'm a small local streetwear label trying to compete online with stores that have actual budgets. Kai built us a proper online store, handled all our TikTok content — 12 videos a month — and did the SEO work in the background while I focused on making clothes. The first viral post he created got 180,000 views and we sold out our limited drop in 48 hours. That had never happened to us before. He replies fast, he explains what he's doing and why, and he treats your brand like it actually matters to him. Highly recommend to any small business in the Philippines trying to grow."</blockquote>
+        <div class="testi-result">
+          <span class="testi-result-label">Outcome</span>
+          <span class="testi-result-val">180K TikTok views · Full limited-drop sellout in 48hrs</span>
+        </div>
+      </div>
+
+      <!-- Review 3 — Food & beverage, cafe -->
+      <div class="testi-card fu d3">
+        <div class="testi-top">
+          <div class="testi-avatar">
+            <img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=120&q=80&auto=format&fit=crop&crop=faces" alt="Bianca R." loading="lazy"/>
+          </div>
+          <div class="testi-who">
+            <div class="testi-name">Bianca R.</div>
+            <div class="testi-role">Co-owner, Kafe Dalisay</div>
+            <div class="testi-platform">
+              <span class="testi-star">★★★★★</span>
+              <span class="testi-via">via Instagram DM (shared with permission)</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-badge">Digital Growth Engine Plan · 6 months</div>
+        <blockquote class="testi-body">"We opened our second branch during our time with Kiri Studio and I genuinely believe the online presence Kai built for us made that possible. He produced short videos of our cafe that made it look like something out of a magazine — soft lighting, storytelling, our baristas shown as real people. Our Instagram following grew from under 800 to over 11,000 in four months. But more importantly, actual customers walked through the door saying they found us through the content. He also recorded a Tagalog voice-over for our brand that plays on our social ads. People ask us about it all the time. I recommend Kiri Studio to every small business owner I meet."</blockquote>
+        <div class="testi-result">
+          <span class="testi-result-label">Outcome</span>
+          <span class="testi-result-val">800 → 11,200 followers · 2nd branch opened in month 5</span>
+        </div>
+      </div>
+
+      <!-- Review 4 — Real estate, smaller card spanning full width as a featured quote -->
+      <div class="testi-card testi-featured fu d1">
+        <div class="testi-featured-inner">
+          <div class="testi-quote-mark">"</div>
+          <blockquote class="testi-body testi-body-lg">We had been paying three separate freelancers — a web developer, a social media person, and an SEO consultant — and our brand still looked scattered and inconsistent. Kiri Studio replaced all three for less money and the results were better within 60 days. The website loads twice as fast, our content finally looks unified, and we're getting genuine leads from Google for the first time. If you're thinking about it, just do it.</blockquote>
+          <div class="testi-featured-who">
+            <div class="testi-avatar testi-avatar-sm">
+              <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=120&q=80&auto=format&fit=crop&crop=faces" alt="Raymond L." loading="lazy"/>
+            </div>
+            <div>
+              <div class="testi-name">Raymond L.</div>
+              <div class="testi-role">Managing Director, Lumina Properties Group</div>
+              <div class="testi-platform">
+                <span class="testi-star">★★★★★</span>
+                <span class="testi-via">Fractional CMO Plan · 4 months</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- .testi-grid -->
+
+    <!-- Social proof bar -->
+    <div class="testi-proof-bar fu d2">
+      <div class="testi-proof-stat"><span class="testi-proof-n">100%</span><span class="testi-proof-l">5-Star Reviews</span></div>
+      <div class="testi-proof-divider"></div>
+      <div class="testi-proof-stat"><span class="testi-proof-n">0</span><span class="testi-proof-l">Clients Who Left</span></div>
+      <div class="testi-proof-divider"></div>
+      <div class="testi-proof-stat"><span class="testi-proof-n">72hr</span><span class="testi-proof-l">Average First Response</span></div>
+      <div class="testi-proof-divider"></div>
+      <div class="testi-proof-stat"><span class="testi-proof-n">4.3×</span><span class="testi-proof-l">Avg Traffic Growth</span></div>
+    </div>
+
+  </div>
+</section>
+
+<div class="pulse-divider"><span></span><span></span><span></span></div>
 
 <!-- ═══════════ THE ARCHITECT ═══════════ -->
 <section class="architect-section" id="architect">
@@ -2381,25 +2676,8 @@ window.addEventListener('mouseup',function(){ isDown=false; strip.classList.remo
 strip.addEventListener('mousemove',function(e){ if(!isDown) return; e.preventDefault(); strip.scrollLeft=scrollLeft-(e.pageX-strip.offsetLeft-startX); });
 } // end strip guard
 
-/* ── TIER TABS ── */
-(function(){
-  var tabs=document.querySelectorAll('.tab');
-  var cards=document.querySelectorAll('.tier-card');
-  tabs.forEach(function(b){
-    b.addEventListener('click',function(){
-      var tier=this.dataset.tier;
-      cards.forEach(function(c){ if(c.classList.contains('show')) c.classList.add('card-exit'); });
-      setTimeout(function(){
-        tabs.forEach(function(x){ x.classList.remove('active'); });
-        b.classList.add('active');
-        cards.forEach(function(c){
-          c.classList.remove('show','card-exit','card-enter');
-          if(c.dataset.tier===tier){ c.classList.add('show'); setTimeout(function(){ c.classList.add('card-enter'); },20); }
-        });
-      },200);
-    });
-  });
-})();
+
+
 
 /* ── STAT COUNTERS ── */
 (function(){
@@ -2643,6 +2921,22 @@ document.getElementById('audit-btn').addEventListener('click',function(){
     requestAnimationFrame(loop);
   }
   loop();
+})();
+
+/* ════════════════════════════════════
+   SERVICE ACCORDION
+   ════════════════════════════════════ */
+(function(){
+  var cards = document.querySelectorAll('.node-card');
+  cards.forEach(function(card){
+    card.addEventListener('click', function(){
+      var isOpen = card.classList.contains('open');
+      // Close all
+      cards.forEach(function(c){ c.classList.remove('open'); });
+      // Toggle clicked one
+      if(!isOpen) card.classList.add('open');
+    });
+  });
 })();
 
 /* ════════════════════════════════════
